@@ -19,8 +19,8 @@ typedef struct			s_link t_link;
 
 typedef struct			s_link_list
 {
-	t_link			*data;
-	struct s_llist	*next;
+	t_link				*data;
+	struct s_link_list	*next;
 }						t_link_list;
 
 typedef struct			s_llist
@@ -59,6 +59,7 @@ typedef struct			s_flags
 	int				count_of_ants;
     int             count_of_room;
     int				count_of_path;
+    int				count_of_edges;
 	int				ant;
 	int				con;
 	int				start;
@@ -67,6 +68,8 @@ typedef struct			s_flags
 
 void				ft_exit(const char *const str);
 
+void				create_links(t_graph *graph, char *name_coor);
+void				check_double_room_coor(t_graph *graph, char *name_coor);
 void				create_rooms(t_graph *graph, char *name_coor);
 void				create_start_room(t_graph *graph, char *name_coor);
 void				create_end_room(t_graph *graph, char *name_coor);

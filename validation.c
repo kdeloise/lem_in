@@ -70,7 +70,7 @@ void	validate_com(char **split_com)
 	//2)Нет ли дублей
 }
 
-int		is_com(char *str)
+int		is_links(char *str)
 {
 	int		cntwd;
 	char	**split_com;
@@ -120,7 +120,7 @@ int		is_coordinate(char *str)
 	char	**split_coor;
 
 	cntwd = ft_cntword(str, ' ');
-	if (cntwd != 3)
+	if (cntwd != 3 || *str == 'L' || *str == '-')
 		return (0);
 	split_coor = ft_strsplit(str, ' ');
 	validate_coor(split_coor);
@@ -146,6 +146,7 @@ int		validate_rows(char **split_buff)
 	fl.count_of_path = 0;
 	fl.count_of_ants = 0;
 	fl.count_of_room = 0;
+	fl.count_of_edges = 0;
 	fl.ant = 0;
 	fl.start = 0;
 	fl.end = 0;
@@ -165,12 +166,12 @@ int		validate_rows(char **split_buff)
 				i++;
 			}
 			else
-				ft_exit("Error");
+				ft_exit("Error <don't have count of ants>");
         }
 		// 2.Далее у нас могут идти только комааетарии, ##start || ##end название комнаты и координаты (<name room> <int x> <int y>)
 		//   Исключить дубли названий и дубли координат, записать все это куда-то чтобы потом проверить их наличие
 		//   скорее всего с помощью хэш-таблиц
-        else if (fl.ant == 1 && fl.start == 0 && fl.end == 0)
+        else if (fl.ant == 1 && fl.start == 0 && fl.end == 0 && fl.con == 0)
 		{
         	while (split_buff[i])
 			{
@@ -183,6 +184,8 @@ int		validate_rows(char **split_buff)
 						i++;
 					if (is_coordinate(split_buff[i]))
 					{
+						check_double_room_coor(&graph, split_buff[i]);
+						create_rooms(&graph, split_buff[i]);
 						create_start_room(&graph, split_buff[i++]);
 						fl.start = 1;
 						fl.count_of_room++;
@@ -197,6 +200,8 @@ int		validate_rows(char **split_buff)
 						i++;
 					if (is_coordinate(split_buff[i]))
 					{
+						check_double_room_coor(&graph, split_buff[i]);
+						create_rooms(&graph, split_buff[i]);
 						create_end_room(&graph, split_buff[i++]);
 						fl.end = 1;
 						fl.count_of_room++;
@@ -206,11 +211,12 @@ int		validate_rows(char **split_buff)
 				}
 				else if (is_coordinate(split_buff[i]))
 				{
+					check_double_room_coor(&graph, split_buff[i]);
 					create_rooms(&graph, split_buff[i]);
 					i++;
 					fl.count_of_room++;
 				}
-				else if (is_com(split_buff[i]) && fl.start == 1 && fl.end == 1)
+				else if (is_links(split_buff[i]) && fl.start == 1 && fl.end == 1)
 					break ;
 				else
 					ft_exit("Error: not valid info after coor!");
@@ -221,8 +227,14 @@ int		validate_rows(char **split_buff)
 		{
 			while (split_buff[i])
 			{
-				if (is_comment(split_buff[i]) || is_com(split_buff[i]))
+				if (is_comment(split_buff[i]))
 					i++;
+				else if (is_links(split_buff[i]))
+				{
+					create_links(&graph, split_buff[i++]);
+					fl.con = 1;
+					fl.count_of_edges++;
+				}
 				else
 					ft_exit("ERORRRRRRRRRRR!");
 			}
