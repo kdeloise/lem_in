@@ -136,7 +136,7 @@ int		is_count_ants(char *str, t_flags *fl)
     return (1);
 }
 
-void	validate_rows(char **split_buff)
+t_graph	*validate_rows(char **split_buff)
 {
 	int		i;
 	t_flags fl;
@@ -244,14 +244,17 @@ void	validate_rows(char **split_buff)
 	}
 	if (!(fl.ant == 1 && fl.start == 1 && fl.end == 1))
 		ft_exit("Error_validation");
+	return (&graph);
 }
 
-void	validation(char	*buff)
+t_graph	*validation(char *buff)
 {
 	char **split_buff;
+	t_graph *graph;
 
 	split_buff = ft_strsplit(buff, '\n');
-	return (validate_rows(split_buff));
+	graph = validate_rows(split_buff);
+	return (graph);
 }
 
 char	*create_validation_buff(void)

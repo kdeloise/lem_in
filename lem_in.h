@@ -75,7 +75,7 @@ void				create_start_room(t_graph *graph, char *name_coor);
 void				create_end_room(t_graph *graph, char *name_coor);
 
 char				*create_validation_buff(void);
-void				validation(char	*buff);
+t_graph				*validation(char	*buff);
 
 
 #endif

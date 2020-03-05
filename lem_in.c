@@ -16,10 +16,10 @@
 int main(int argc, char **argv)
 {
 	char	*buff;
-
+	t_graph *graph;
 
 	buff = create_validation_buff();
-	validation(buff);
+	graph = validation(buff);
 	printf("%s", buff);
 	return (0);
 }
