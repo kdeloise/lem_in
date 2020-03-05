@@ -13,10 +13,10 @@
 #include "lem_in.h"
 
 
-
 int main(int argc, char **argv)
 {
 	char	*buff;
+
 
 	buff = create_validation_buff();
 	validation(buff);

@@ -42,7 +42,7 @@ int		atoi_for_lemin(const char *str)
 			x++;
 	}
 	nbr = nbr * negative;
-	if (nbr > 2147483647 || nbr < -2147483648 || x > 9 || nbr <= 0)
+	if (nbr > 2147483647 || nbr < -2147483648 || x > 9 || nbr < 0)
 	{
 		ft_putstr("Error\n");
 		exit(1);
@@ -107,6 +107,7 @@ void	validate_coor(char **split_coor)
 	i = 1;
 	while (split_coor[i])
 	{
+		atoi_for_lemin(split_coor[i]);
 		if (is_str_digits(split_coor[i]))
 			i++;
 		else
@@ -135,7 +136,7 @@ int		is_count_ants(char *str, t_flags *fl)
     return (1);
 }
 
-int		validate_rows(char **split_buff)
+void	validate_rows(char **split_buff)
 {
 	int		i;
 	t_flags fl;
@@ -162,6 +163,7 @@ int		validate_rows(char **split_buff)
         {
 			if (is_count_ants(split_buff[i], &fl))
 			{
+				fl.count_of_ants = ft_atoi(split_buff[i]);
 				fl.ant = 1;
 				i++;
 			}
@@ -236,7 +238,7 @@ int		validate_rows(char **split_buff)
 					fl.count_of_edges++;
 				}
 				else
-					ft_exit("ERORRRRRRRRRRR!");
+					ft_exit("Error <don't have correct link>");
 			}
 		}
 	}
@@ -244,7 +246,7 @@ int		validate_rows(char **split_buff)
 		ft_exit("Error_validation");
 }
 
-int		validation(char	*buff)
+void	validation(char	*buff)
 {
 	char **split_buff;
 
