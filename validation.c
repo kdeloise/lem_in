@@ -204,7 +204,7 @@ t_graph	*validate_rows(char **split_buff)
 					if (is_coordinate(split_buff[i]))
 					{
 						check_double_room_coor(graph, split_buff[i]);
-						create_rooms(graph, split_buff[i]);
+						//create_rooms(graph, split_buff[i]);
 						create_end_room(graph, split_buff[i++]);
 						fl.end = 1;
 						fl.count_of_room++;
