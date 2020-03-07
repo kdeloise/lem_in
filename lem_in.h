@@ -66,6 +66,12 @@ typedef struct			s_flags
 	int				end;
 }						t_flags;
 
+typedef	struct			s_path
+{
+	t_room				*room;
+	struct s_path		*next;
+}						t_path;
+
 void				ft_exit(const char *const str);
 
 void				create_links(t_graph *graph, char *name_coor);
@@ -77,5 +83,5 @@ void				create_end_room(t_graph *graph, char *name_coor);
 char				*create_validation_buff(void);
 t_graph				*validation(char	*buff);
 
-
+// void				suurbale(t_graph *graph)
 #endif

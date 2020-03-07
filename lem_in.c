@@ -20,6 +20,7 @@ int main(int argc, char **argv)
 
 	buff = create_validation_buff();
 	graph = validation(buff);
+//	suurbale(graph);
 	printf("%s", buff);
 	return (0);
 }
