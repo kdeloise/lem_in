@@ -141,9 +141,10 @@ t_graph	*validate_rows(char **split_buff)
 	int		i;
 	t_flags fl;
 	t_llist	*list;
-	t_graph graph;
-	graph.rooms = NULL;
+	t_graph *graph;
 
+	if (!(graph = (t_graph*)ft_memalloc(sizeof(t_graph))))
+		exit (1);
 	fl.count_of_path = 0;
 	fl.count_of_ants = 0;
 	fl.count_of_room = 0;
@@ -186,9 +187,9 @@ t_graph	*validate_rows(char **split_buff)
 						i++;
 					if (is_coordinate(split_buff[i]))
 					{
-						check_double_room_coor(&graph, split_buff[i]);
-						create_rooms(&graph, split_buff[i]);
-						create_start_room(&graph, split_buff[i++]);
+						check_double_room_coor(graph, split_buff[i]);
+						//create_rooms(graph, split_buff[i]);
+						create_start_room(graph, split_buff[i++]);
 						fl.start = 1;
 						fl.count_of_room++;
 					}
@@ -202,9 +203,9 @@ t_graph	*validate_rows(char **split_buff)
 						i++;
 					if (is_coordinate(split_buff[i]))
 					{
-						check_double_room_coor(&graph, split_buff[i]);
-						create_rooms(&graph, split_buff[i]);
-						create_end_room(&graph, split_buff[i++]);
+						check_double_room_coor(graph, split_buff[i]);
+						//create_rooms(graph, split_buff[i]);
+						create_end_room(graph, split_buff[i++]);
 						fl.end = 1;
 						fl.count_of_room++;
 					}
@@ -213,8 +214,8 @@ t_graph	*validate_rows(char **split_buff)
 				}
 				else if (is_coordinate(split_buff[i]))
 				{
-					check_double_room_coor(&graph, split_buff[i]);
-					create_rooms(&graph, split_buff[i]);
+					check_double_room_coor(graph, split_buff[i]);
+					create_rooms(graph, split_buff[i]);
 					i++;
 					fl.count_of_room++;
 				}
@@ -233,7 +234,7 @@ t_graph	*validate_rows(char **split_buff)
 					i++;
 				else if (is_links(split_buff[i]))
 				{
-					create_links(&graph, split_buff[i++]);
+					create_links(graph, split_buff[i++]);
 					fl.con = 1;
 					fl.count_of_edges++;
 				}
@@ -244,7 +245,7 @@ t_graph	*validate_rows(char **split_buff)
 	}
 	if (!(fl.ant == 1 && fl.start == 1 && fl.end == 1))
 		ft_exit("Error_validation");
-	return (&graph);
+	return (graph);
 }
 
 t_graph	*validation(char *buff)
