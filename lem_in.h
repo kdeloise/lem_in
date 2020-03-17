@@ -11,9 +11,13 @@
 /* ************************************************************************** */
 
 #ifndef LEM_IN_H
-#define LEM_IN_H
+# define LEM_IN_H
+# define INF 10000000
+# define BLACK 1
+# define RED 0
 
 #include "libft/libft.h"
+
 typedef struct			s_room t_room;
 typedef struct			s_link t_link;
 
@@ -31,14 +35,13 @@ typedef struct			s_llist
 
 struct				s_room
 {
-	char 			*name;				//имя комнаты
-	int				x;					//координаты
-	int				y;					//команты
+	char 			*name;				// имя комнаты
+	int				x;					// координаты
+	int				y;					// команты
+	int				flag;
+	int 			distance;
 	t_link_list 	*links;				// neighbors: list of pointers to Link Кол-во ребер
-	int 			distance;			// mmarti
 	struct s_room	*parent;			// for Dijkstra's algorithm (see Appendix in Bhandari's article) mmarti
-	struct s_room	*pred;				//	mmarti
-	struct s_room	*succ;				// pointers to adjacent rooms along the path mmarti
 };
 
 struct				s_link
@@ -72,6 +75,21 @@ typedef	struct			s_path
 	struct s_path		*next;
 }						t_path;
 
+typedef struct			s_set
+{
+	t_room				*r;
+	struct s_set		*next;
+}						t_set;
+
+// typedef struct 			s_set
+// {
+// 	int					color;
+// 	t_room				*room;
+// 	struct s_set		*parent;
+// 	struct s_set		*left;
+// 	struct s_set		*right;
+// }						t_set;
+
 void				ft_exit(const char *const str);
 
 void				create_links(t_graph *graph, char *name_coor);
@@ -82,6 +100,8 @@ void				create_end_room(t_graph *graph, char *name_coor);
 
 char				*create_validation_buff(void);
 t_graph				*validation(char	*buff);
+
+void				suurbale(t_graph *graph);
 
 // void				suurbale(t_graph *graph)
 #endif

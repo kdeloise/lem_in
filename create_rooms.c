@@ -156,6 +156,7 @@ void	create_rooms(t_graph *graph, char *name_coor)
 		add->next = graph->rooms;
 		graph->rooms = add;
 	}
+	add_room->distance = INF;
 }
 
 void	create_start_room(t_graph *graph, char *name_coor)
@@ -172,6 +173,7 @@ void	create_start_room(t_graph *graph, char *name_coor)
 	graph->start->y = ft_atoi(split_name_coor[2]);
 	tmp->data = graph->start;
 	tmp->next = graph->rooms;
+	graph->start->distance = 0;
 	graph->rooms = tmp;
 }
 
@@ -190,5 +192,6 @@ void	create_end_room(t_graph *graph, char *name_coor)
 	graph->end->y = ft_atoi(split_name_coor[2]);
 	tmp->data = graph->end;
 	tmp->next = graph->rooms;
+	graph->end->distance = INF;
 	graph->rooms = tmp;
 }
