@@ -403,6 +403,7 @@ void	del_link(t_link_list *l, t_room *r)
 			if (prev)
 				prev->next = l->next;
 			free(l);
+			return ;
 		}
 		prev = l;
 		l = l->next;
