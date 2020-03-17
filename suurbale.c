@@ -391,23 +391,28 @@ t_link	*find_link(t_link_list *l, t_room *r)
 	return (NULL);
 }
 
-void	del_link(t_link_list *l, t_room *r)
+t_link_list	*del_link(t_link_list *l, t_room *r)
 {
 	t_link_list *prev;
+	t_link_list *first;
 
 	prev = NULL;
+	first = l;
 	while (l)
 	{
 		if (l->data->dst == r)
 		{
 			if (prev)
 				prev->next = l->next;
+			else
+				first = first->next;
 			free(l);
-			return ;
+			break ;
 		}
 		prev = l;
 		l = l->next;
 	}
+	return (first);
 }
 
 t_path	*p_push_begin(t_room *r, t_path *p)
@@ -432,7 +437,7 @@ t_path	*assemble_path(t_room *e)
 		if (e->parent)
 		{
 			find_link(e->links, e->parent)->weight = -1;
-			del_link(e->parent->links, e);
+			e->parent->links = del_link(e->parent->links, e);
 		}
 		e = e->parent;
 	}
@@ -458,6 +463,11 @@ t_path  *dejkstra(t_set **s, t_room *e, int max_path)
 	}
 	return (assemble_path(w));
 }
+
+// void	print_links(t_room *r)
+// {
+
+// }
 
 void	print_path(t_path *p)
 {
