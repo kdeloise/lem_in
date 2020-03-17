@@ -59,6 +59,7 @@ typedef struct			s_graph
 
 typedef struct			s_flags
 {
+	t_room			**array_of_rooms_ptr;
 	int				count_of_ants;
     int             count_of_room;
     int				count_of_path;
@@ -81,6 +82,13 @@ typedef struct			s_set
 	struct s_set		*next;
 }						t_set;
 
+typedef struct			s_paths_list
+{
+	t_path				*p;
+	struct s_paths_list	*next;
+}						t_paths_list;
+
+
 // typedef struct 			s_set
 // {
 // 	int					color;
@@ -92,7 +100,17 @@ typedef struct			s_set
 
 void				ft_exit(const char *const str);
 
+void				ft_quick_sort_coor(t_room **array, int start, int end);
+void				ft_quick_sort(t_room **array, int start, int end);
+void				create_array_of_rooms_ptr(t_flags *flag, t_graph *graph);
+
+
 void				create_links(t_graph *graph, char *name_coor);
+
+void				create_links_binary(t_graph *graph, char *name_coor, t_flags *flags);
+
+void				check_double_name(t_room **array_of_rooms_ptr, int count);
+void				check_double_coor(t_room **array_of_rooms_ptr, int count);
 void				check_double_room_coor(t_graph *graph, char *name_coor);
 void				create_rooms(t_graph *graph, char *name_coor);
 void				create_start_room(t_graph *graph, char *name_coor);

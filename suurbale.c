@@ -349,6 +349,7 @@ t_set	*set_del(t_set *s, t_room *r)
 	{
 		if (s->r == r)
 		{
+			r->flag = 0;
 			if (prev)
 				prev->next = s->next;
 			else
@@ -362,14 +363,25 @@ t_set	*set_del(t_set *s, t_room *r)
 	return (first);
 }
 
-void	step(t_set **s, t_room *w)
+t_path	*p_find(t_path *p, t_room *r)
+{
+	while (p)
+	{
+		if (p->room == r)
+			return (p);
+		p = p->next;
+	}
+	return (NULL);
+}
+
+void	step(t_set **s, t_room *w, t_path *tmp)
 {
 	t_link_list *l;
 
 	l = w->links;
 	while (l)
 	{
-		if (l->data->dst->flag == 0)
+		if (l->data->weight < INF && !p_find(tmp, l->data->dst))
 			set_add(s, l->data->dst, l->data->weight + w->distance, w);
 		l = l->next;
 	}
@@ -402,11 +414,7 @@ t_link_list	*del_link(t_link_list *l, t_room *r)
 	{
 		if (l->data->dst == r)
 		{
-			if (prev)
-				prev->next = l->next;
-			else
-				first = first->next;
-			free(l);
+			l->data->weight = INF;
 			break ;
 		}
 		prev = l;
@@ -426,7 +434,7 @@ t_path	*p_push_begin(t_room *r, t_path *p)
 	return (new);
 }
 
-t_path	*assemble_path(t_room *e)
+t_path	*assemble_path(t_room *e, t_graph *g)
 {
 	t_path	*p;
 
@@ -444,24 +452,26 @@ t_path	*assemble_path(t_room *e)
 	return (p);
 }
 
-t_path  *dejkstra(t_set **s, t_room *e, int max_path)
+t_path  *dejkstra(t_set **s, t_graph *g, int max_path)
 {
 	t_path	*p;
 	t_room	*w;
+	t_path *tmp = NULL;
 
 	if (!*s)
 		return (NULL);
-	w = set_min(*s)->r;
-	while (w && w != e)
+	w = g->start;
+	while (w && w != g->end)
 	{
-		step(s, w);
-		w->flag = 1;
+		step(s, w, tmp);
+		tmp = p_push_begin(w, tmp);
 		*s = set_del(*s, w);
 		if (!*s)
 			return (NULL);
 		w = set_min(*s)->r;
 	}
-	return (assemble_path(w));
+	*s = set_del(*s, g->end);
+	return (assemble_path(w, g));
 }
 
 // void	print_links(t_room *r)
@@ -476,7 +486,57 @@ void	print_path(t_path *p)
 		printf("%s\n", p->room->name);
 		p = p->next;
 	}
-	
+	printf("\n");
+}
+
+t_paths_list *plist_push_back(t_paths_list *p_list, t_path *p)
+{
+	t_paths_list *first;
+	t_paths_list *new;
+	first = p_list;
+	if (!(new = (t_paths_list *)ft_memalloc(sizeof(t_paths_list))))
+		exit (1);
+	new->p = p;
+	if (!first)
+		return (new);
+	while (p_list->next)
+		p_list = p_list->next;
+	p_list->next = new;
+	return (first);
+}
+
+void	restore(t_set *s, t_path *p)
+{
+	t_set *tmp;
+
+	while (s)
+	{
+		tmp = s;
+		s->r->parent = NULL;
+		s->r->flag = 0;
+		s->r->distance = INF;
+		s = s->next;
+		free(tmp);
+	}
+	while (p)
+	{
+		p->room->parent = NULL;
+		p->room->flag = 0;
+		p->room->distance = INF;
+		p = p->next;
+	}
+}
+
+#include <string.h>
+t_room *find_by_name(t_llist *r, char *name)
+{
+	while (r)
+	{
+		if (!strcmp(r->data->name, name))
+			return (r->data);
+		r = r->next;
+	}
+	return (0);
 }
 
 void    suurbale(t_graph *graph)
@@ -484,9 +544,24 @@ void    suurbale(t_graph *graph)
 	t_set *s;
 	int max_path;
 	t_path *p;
-
-	s = set_init(graph->start);
+	t_paths_list *p_list;
+	t_room *dbg;
 	max_path = count_links(graph->end);
-	p = dejkstra(&s, graph->end, max_path);
-	print_path(p);
+	p_list = NULL;
+	dbg = find_by_name(graph->rooms, "A_i5");
+	//p = dejkstra(&s, graph, max_path);
+	while (max_path--)
+	{
+		s = set_init(graph->start);
+	 	if (!(p = dejkstra(&s, graph, max_path)))
+	 		break ;
+		p_list = plist_push_back(p_list, p);
+		restore(s, p);
+		graph->start->distance = 0;
+	}
+	while (p_list)
+	{
+		print_path(p_list->p);
+		p_list = p_list->next;
+	}
 }

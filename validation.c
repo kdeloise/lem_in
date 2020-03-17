@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "lem_in.h"
+#include "string.h"
 
 void	ft_exit(const char *const str)
 {
@@ -145,6 +146,7 @@ t_graph	*validate_rows(char **split_buff)
 
 	if (!(graph = (t_graph*)ft_memalloc(sizeof(t_graph))))
 		exit (1);
+	fl.array_of_rooms_ptr = NULL;
 	fl.count_of_path = 0;
 	fl.count_of_ants = 0;
 	fl.count_of_room = 0;
@@ -165,6 +167,8 @@ t_graph	*validate_rows(char **split_buff)
 			if (is_count_ants(split_buff[i], &fl))
 			{
 				fl.count_of_ants = ft_atoi(split_buff[i]);
+				if (fl.count_of_ants == 0)
+					ft_exit("Error <don't have ants>");
 				fl.ant = 1;
 				i++;
 			}
@@ -187,7 +191,7 @@ t_graph	*validate_rows(char **split_buff)
 						i++;
 					if (is_coordinate(split_buff[i]))
 					{
-						check_double_room_coor(graph, split_buff[i]);
+//						check_double_room_coor(graph, split_buff[i]);
 						//create_rooms(graph, split_buff[i]);
 						create_start_room(graph, split_buff[i++]);
 						fl.start = 1;
@@ -203,7 +207,7 @@ t_graph	*validate_rows(char **split_buff)
 						i++;
 					if (is_coordinate(split_buff[i]))
 					{
-						check_double_room_coor(graph, split_buff[i]);
+//						check_double_room_coor(graph, split_buff[i]);
 						//create_rooms(graph, split_buff[i]);
 						create_end_room(graph, split_buff[i++]);
 						fl.end = 1;
@@ -214,13 +218,20 @@ t_graph	*validate_rows(char **split_buff)
 				}
 				else if (is_coordinate(split_buff[i]))
 				{
-					check_double_room_coor(graph, split_buff[i]);
+//					check_double_room_coor(graph, split_buff[i]);
 					create_rooms(graph, split_buff[i]);
 					i++;
 					fl.count_of_room++;
 				}
-				else if (is_links(split_buff[i]) && fl.start == 1 && fl.end == 1)
+				else if (is_links(split_buff[i]) && fl.start == 1 && fl.end == 1 && fl.ant == 1)
+				{
+					create_array_of_rooms_ptr(&fl, graph);
+					ft_quick_sort_coor(fl.array_of_rooms_ptr, 0, fl.count_of_room - 1);
+					check_double_coor(fl.array_of_rooms_ptr, fl.count_of_room);
+					ft_quick_sort(fl.array_of_rooms_ptr, 0, fl.count_of_room - 1);
+					check_double_name(fl.array_of_rooms_ptr, fl.count_of_room);
 					break ;
+				}
 				else
 					ft_exit("Error: not valid info after coor!");
 			}
@@ -234,7 +245,8 @@ t_graph	*validate_rows(char **split_buff)
 					i++;
 				else if (is_links(split_buff[i]))
 				{
-					create_links(graph, split_buff[i++]);
+//					create_links(graph, split_buff[i++]);
+					create_links_binary(graph, split_buff[i++], &fl);
 					fl.con = 1;
 					fl.count_of_edges++;
 				}
@@ -243,7 +255,7 @@ t_graph	*validate_rows(char **split_buff)
 			}
 		}
 	}
-	if (!(fl.ant == 1 && fl.start == 1 && fl.end == 1))
+	if (!(fl.ant == 1 && fl.start == 1 && fl.end == 1 && fl.con == 1))
 		ft_exit("Error_validation");
 	return (graph);
 }
@@ -261,15 +273,14 @@ t_graph	*validation(char *buff)
 char	*create_validation_buff(void)
 {
 	char	*line;
-	char 	*buff;
 	int		fd;
 
-	buff = "";
-	fd = open("map", O_RDONLY);
+	fd = open("map_25", O_RDONLY);
+//	fd = open("../42_lem-in_tools/maps/valid/big_sup/map_big_sup_10", O_RDONLY);
+//	fd = open("../42_lem-in_tools/maps/valid/big_sup/map_big_sup_1", O_RDONLY);
+	if (fd < 0)
+		exit (1);
 	while(get_next_line(fd, &line))
-	{
-		buff = ft_strjoin(ft_strjoin(buff, line), "\n");
-		free(line);
-	}
-	return (buff);
+		;
+	return (line);
 }
