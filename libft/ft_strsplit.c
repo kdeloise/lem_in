@@ -23,7 +23,7 @@ char	**ft_strsplit(char const *s, char c)
 		return (0);
 	i = 0;
 	len = 0;
-	n = (char **)malloc(sizeof(char *) * ft_cntword(s, c) + 1);
+	n = (char **)ft_memalloc(sizeof(char *) * ft_cntword(s, c) + 1);
 	if (n == NULL)
 		return (NULL);
 	while (s[i] != '\0')
@@ -36,6 +36,6 @@ char	**ft_strsplit(char const *s, char c)
 		if (i > j)
 			n[len++] = ft_strndup(&s[j], i - j);
 	}
-	n[len] = NULL;
+	//n[len] = NULL;
 	return (n);
 }
